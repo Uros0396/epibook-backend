@@ -1,11 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Booksmodel = require("../models/Booksmodel");
-const Books1 = express.Router();
+const books = express.Router();
 const isArrayEmpty = require("../utiles/checkArrayLength");
 const manageErrorMessage = require("../utiles/menageErrorMessage");
 
-Books1.get("/books", async (req, res) => {
+books.get("/books", async (req, res) => {
   const { page = 1, pageSize = 200 } = req.query;
   try {
     const books = await Booksmodel.find()
@@ -33,7 +33,7 @@ Books1.get("/books", async (req, res) => {
   }
 });
 
-Books1.get("/books/search/:title", async (req, res) => {
+books.get("/books/search/:title", async (req, res) => {
   const { title } = req.params;
   const { page = 1, pageSize = 10 } = req.query;
 
@@ -85,7 +85,7 @@ Books1.get("/books/search/:title", async (req, res) => {
   }
 });
 
-Books1.get("/book/:bookId", async (req, res) => {
+books.get("/book/:bookId", async (req, res) => {
   const { bookId } = req.params;
 
   try {
@@ -110,7 +110,7 @@ Books1.get("/book/:bookId", async (req, res) => {
   }
 });
 
-Books1.post("/books/create", async (req, res) => {
+books.post("/books/create", async (req, res) => {
   const newBook = new Booksmodel({
     asin: req.body.asin,
     title: req.body.title,
@@ -133,7 +133,7 @@ Books1.post("/books/create", async (req, res) => {
   }
 });
 
-Books1.patch("/book/update/:bookId", async (req, res) => {
+books.patch("/book/update/:bookId", async (req, res) => {
   const { bookId } = req.params;
   const bookExist = await Booksmodel.findById(bookId);
 
@@ -169,7 +169,7 @@ Books1.patch("/book/update/:bookId", async (req, res) => {
   }
 });
 
-Books1.delete("/book/:bookId", async (req, res) => {
+books.delete("/book/:bookId", async (req, res) => {
   const { bookId } = req.params;
 
   try {
@@ -194,4 +194,4 @@ Books1.delete("/book/:bookId", async (req, res) => {
   }
 });
 
-module.exports = Books1;
+module.exports = books;
