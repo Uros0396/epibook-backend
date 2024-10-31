@@ -4,6 +4,7 @@ const Booksmodel = require("../models/Booksmodel");
 const books = express.Router();
 const isArrayEmpty = require("../utiles/checkArrayLength");
 const manageErrorMessage = require("../utiles/menageErrorMessage");
+const { upload, cloud } = require("../middleware-be/multerMiddleware");
 
 books.get("/books", async (req, res) => {
   const { page = 1, pageSize = 200 } = req.query;
@@ -193,5 +194,27 @@ books.delete("/book/:bookId", async (req, res) => {
     });
   }
 });
+
+books.post("/books/upload", upload.single("img"), async (req, res, next) => {
+  try {
+    const url = `${req.protocol}://${req.get("host")}`;
+    const imgUrl = req.file.filename;
+    res.status(200).json({ img: `${url}/uploads/${imgUrl}` });
+  } catch (error) {
+    next(e);
+  }
+});
+
+books.post(
+  "/books/upload/cloud",
+  cloud.single("img"),
+  async (req, res, next) => {
+    try {
+      res.status(200).json({ img: req.file.path });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = books;

@@ -2,7 +2,7 @@ const express = require("express");
 const users = express.Router();
 const UserModel = require("../models/Usersmodel");
 
-users.get("/users", async (req, res) => {
+users.get("/users", async (req, res, next) => {
   try {
     const users = await UserModel.find();
     if (users.length === 0) {
@@ -16,14 +16,11 @@ users.get("/users", async (req, res) => {
       users,
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Something went wrong",
-    });
+    next(error);
   }
 });
 
-users.get("/users/:userId", async (req, res) => {
+users.get("/users/:userId", async (req, res, next) => {
   const { userId } = req.params;
   if (!userId) {
     return res.status(400).send({
@@ -41,15 +38,11 @@ users.get("/users/:userId", async (req, res) => {
     }
     res.status(200).send(user);
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Something went wrong",
-    });
+    next(error);
   }
 });
 
-users.post("/users/create", async (req, res) => {
-  console.log(req.body);
+users.post("/users/create", async (req, res, next) => {
   const newUser = new UserModel({
     name: req.body.name,
     surname: req.body.surname,
@@ -64,18 +57,15 @@ users.post("/users/create", async (req, res) => {
     const user = await newUser.save();
     res.status(201).send({
       statusCode: 201,
-      message: "User saved successfulluy",
+      message: "User saved successfully",
       user,
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Something went wrong",
-    });
+    next(error);
   }
 });
 
-users.put("/users/put/:userId", async (req, res) => {
+users.put("/users/put/:userId", async (req, res, next) => {
   const { userId } = req.params;
 
   if (!userId) {
@@ -86,7 +76,9 @@ users.put("/users/put/:userId", async (req, res) => {
   }
 
   try {
-    const user = await UserModel.findByIdAndUpdate(userId);
+    const user = await UserModel.findByIdAndUpdate(userId, req.body, {
+      new: true,
+    });
 
     if (!user) {
       return res.status(404).send({
@@ -97,16 +89,14 @@ users.put("/users/put/:userId", async (req, res) => {
     res.status(200).send({
       statusCode: 200,
       message: "User modified successfully",
+      user,
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Something went wrong",
-    });
+    next(error);
   }
 });
 
-users.delete("/users/delete/:userId", async (req, res) => {
+users.delete("/users/delete/:userId", async (req, res, next) => {
   const { userId } = req.params;
 
   if (!userId) {
@@ -131,10 +121,7 @@ users.delete("/users/delete/:userId", async (req, res) => {
       message: "User deleted successfully",
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Something went wrong",
-    });
+    next(error);
   }
 });
 

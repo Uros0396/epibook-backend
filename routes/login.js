@@ -1,77 +1,44 @@
-{
-  /*const express = require("express");
-const login = express.Router();
-const UserModel = require("../models/Usersmodel");
-const bcrypt = require("bcrypt");
-
-login.post("/login", async (req, res) => {
-  try {
-    const user = await UserModel.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(404).send({
-        statusCode: 404,
-        message: "wrong email",
-      });
-    }
-
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
-    if (!isPasswordValid) {
-      return res.status(403).send({
-        statusCode: 403,
-        message: "password is not valid",
-      });
-    }
-
-    res.status(200).send({
-      statusCode: 200,
-      message: "Login successful",
-      userId: user._id,
-    });
-  } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "something went wrong",
-    });
-  }
-});
-
-module.exports = login;*/
-}
-
+const TOKEN = require("../tokens/token");
 const express = require("express");
 const login = express.Router();
 const UserModel = require("../models/Usersmodel");
 
-login.post("/login", async (req, res) => {
+const isPasswordValid = (userPassword, requestPassword) => {
+  if (userPassword === requestPassword) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+login.post("/login", async (request, response) => {
   try {
-    const user = await UserModel.findOne({ email: req.body.email });
+    const user = await UserModel.findOne({ email: request.body.email });
     if (!user) {
-      return res.status(404).send({
+      return response.status(404).send({
         statusCode: 404,
-        message: "wrong email",
+        message: "User not found with given email",
       });
     }
 
-    // Controlla la password in testo semplice (NON SICURO)
-    if (req.body.password !== user.password) {
-      return res.status(403).send({
+    const checkPassword = isPasswordValid(user.password, request.body.password);
+    console.log(checkPassword);
+    if (!checkPassword) {
+      return response.status(403).send({
         statusCode: 403,
-        message: "password is not valid",
+        message: "Password not valid",
       });
     }
 
-    res.status(200).send({
+    response.header("Authorized", TOKEN).status(200).send({
       statusCode: 200,
-      message: "Login successful",
-      userId: user._id,
+      message: "Correct login",
+      token: TOKEN,
     });
   } catch (error) {
-    res.status(500).send({
+    response.status(500).send({
       statusCode: 500,
-      message: "something went wrong",
+      message: "Something went wrong",
     });
   }
 });
