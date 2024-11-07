@@ -17,7 +17,7 @@ const BookSchema = new mongoose.Schema(
       default: "https://placehold.co/600x400",
     },
     price: {
-      type: mongoose.Types.Decimal128, // Usa Decimal128 per memorizzare valori decimali
+      type: mongoose.Types.Decimal128,
       required: true,
     },
     category: {
@@ -25,11 +25,22 @@ const BookSchema = new mongoose.Schema(
       enum: ALLOWED_CATEGORIES,
       required: true,
     },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Usersmodel",
+    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Commentsmodel",
+      },
+    ],
   },
+
   {
     timestamps: true,
     strict: true,
   }
 );
 
-module.exports = mongoose.model("booksModel", BookSchema, "books");
+module.exports = mongoose.model("Booksmodel", BookSchema, "books");

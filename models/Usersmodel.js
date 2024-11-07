@@ -51,6 +51,13 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    books: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booksmodel",
+      },
+    ],
   },
   {
     timestamps: true,
@@ -58,4 +65,4 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("userModel", UserSchema, "users");
+module.exports = mongoose.model("Usersmodel", UserSchema, "users");

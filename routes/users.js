@@ -4,13 +4,18 @@ const UserModel = require("../models/Usersmodel");
 
 users.get("/users", async (req, res, next) => {
   try {
-    const users = await UserModel.find();
+    const users = await UserModel.find().populate({
+      path: "books",
+      select: "title",
+    });
+
     if (users.length === 0) {
       return res.status(404).send({
         statusCode: 404,
         message: "User not found",
       });
     }
+
     res.status(200).send({
       statusCode: 200,
       users,
