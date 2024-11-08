@@ -128,13 +128,13 @@ books.post("/books/:bookId/create/comment", async (req, res) => {
       comments: req.body.comment,
       rate: req.body.rate,
     });
-    comment.save();
+    await comment.save();
 
     const book = await Booksmodel.findByIdAndUpdate(
       req.params.bookId,
       { $push: { comments: comment._id } },
       { new: true }
-    );
+    ).populate("comments");
 
     res.status(201).send({
       statusCode: 201,

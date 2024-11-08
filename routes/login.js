@@ -1,7 +1,7 @@
 const TOKEN = require("../tokens/token");
 const express = require("express");
 const login = express.Router();
-const UserModel = require("../models/Usersmodel");
+const Usersmodel = require("../models/Usersmodel");
 
 const isPasswordValid = (userPassword, requestPassword) => {
   if (userPassword === requestPassword) {
@@ -13,7 +13,7 @@ const isPasswordValid = (userPassword, requestPassword) => {
 
 login.post("/login", async (request, response) => {
   try {
-    const user = await UserModel.findOne({ email: request.body.email });
+    const user = await Usersmodel.findOne({ email: request.body.email });
     if (!user) {
       return response.status(404).send({
         statusCode: 404,
