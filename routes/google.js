@@ -82,7 +82,9 @@ google.get("/auth/google/callback", async (req, res) => {
   const response = await token.json();
 
   //res.cookie("token", JSON.stringify(response.access_token));
-  res.redirect("http://localhost:5173/success/" + response.access_token);
+  res.redirect(
+    "https://epibook-frontend.vercel.app/success/" + response.access_token
+  );
 });
 
 // google.get(
