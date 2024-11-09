@@ -3,4 +3,4 @@ const manageErrorMessage = (error) => {
   return debugMode ? error.message : error;
 };
 
-module.export = manageErrorMessage;
+module.exports = manageErrorMessage;

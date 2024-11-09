@@ -57,6 +57,18 @@ comments.get("/comment", async (req, res, next) => {
   }
 });
 
+comments.get("/comments/:bookId", async (req, res, next) => {
+  try {
+    const { bookId } = req.params;
+    const commentsByBook = await Booksmodel.findById(bookId)
+      .populate("comments")
+      .select("comments");
+    res.status(200).send(commentsByBook);
+  } catch (error) {
+    next(error);
+  }
+});
+
 comments.post("/comment/create", async (req, res, next) => {
   console.log(req.body);
   try {
@@ -82,10 +94,7 @@ comments.post("/comment/create", async (req, res, next) => {
 
     res.status(201).send(savedComment);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Qualcosa è andato storto!", error: error.message });
+    next(error);
   }
 });
 

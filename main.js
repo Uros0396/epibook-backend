@@ -12,20 +12,17 @@ const init = require("./db");
 const PORT = 4500;
 const server = express();
 
-// Middleware per la gestione delle richieste statiche
 server.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 
-// Middleware per CORS e parsing del JSON
 server.use(cors());
-server.use(express.json()); // Assicurati che questa riga sia qui
+server.use(express.json());
 
-// Definizione delle rotte
 server.use("/", usersRoute);
 server.use("/", loginRoute);
 server.use("/", booksRoute);
 server.use("/", commentsRoute);
 server.use("/", googleRoute);
-// Middleware per la gestione degli errori
+
 const errorHandler = (err, req, res, next) => {
   console.error(err);
 
@@ -42,11 +39,8 @@ const errorHandler = (err, req, res, next) => {
   return res.status(500).json({ message: "Qualcosa è andato storto!" });
 };
 
-// Inizializzazione del database
 init();
 
-// Middleware per la gestione degli errori
 server.use(errorHandler);
 
-// Avvio del server
 server.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
