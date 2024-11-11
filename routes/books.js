@@ -6,7 +6,6 @@ const books = express.Router();
 const isArrayEmpty = require("../utiles/checkArrayLength");
 const manageErrorMessage = require("../utiles/menageErrorMessage");
 const { upload, cloud } = require("../middleware-be/multerMiddleware");
-const Commentsmodel = require("../models/Commentsmodel");
 
 books.get("/books", async (req, res) => {
   const { page = 1, pageSize = 200 } = req.query;
