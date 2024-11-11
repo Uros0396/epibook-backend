@@ -30,33 +30,21 @@ login.post("/login", async (request, response) => {
       });
     }
 
-    const tokenUser = jwt.sign(
-      {
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        _id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "240m",
-      }
-    );
+    const payload = {
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      _id: user._id,
+    };
 
-    response
-      .header("Authorized", tokenUser)
-      .status(200)
-      .send({
-        statusCode: 200,
-        message: "Correct login",
-        token: tokenUser,
-        user: {
-          name: user.name,
-          surname: user.surname,
-          email: user.email,
-          _id: user._id,
-        },
-      });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "240m",
+    });
+
+    response.status(200).send({
+      statusCode: 200,
+      token,
+    });
   } catch (error) {
     response.status(500).send({
       statusCode: 500,
