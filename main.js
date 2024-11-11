@@ -15,6 +15,7 @@ const server = express();
 server.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 
 server.use(cors());
+
 server.use(express.json());
 
 server.use("/", usersRoute);
