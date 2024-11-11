@@ -101,5 +101,20 @@ google.get("/auth/google/callback", async (req, res) => {
 //     res.redirect(redirectUrl);
 //   }
 // );
+google.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }, (req, res) => {
+    if (user) {
+      const user = req.user;
+      const token = jwt.sign(user, process.env.JWT_SECRET);
+      const redirectUrl = `${
+        process.env.FRONTEND_URL
+      }/success?token=${encodeURIComponent(token)}`;
+      res.redirect(redirectUrl);
+    } else {
+      res.redirect("/");
+    }
+  })
+);
 
 module.exports = google;

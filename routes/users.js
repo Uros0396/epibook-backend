@@ -47,52 +47,13 @@ users.get("/user/search/:username", async (req, res) => {
   }
 
   try {
-    const regex = new RegExp(`.*${username}.*`, "i");
-    const users = await Usersmodel.find({ username: { $regex: regex } })
-      .limit(pageSize)
-      .skip((page - 1) * pageSize)
-      .populate("books");
-
-    const count = await Usersmodel.countDocuments({
-      username: { $regex: regex, $options: "i" },
-    });
-    const totalPages = Math.ceil(count / pageSize);
-
-    if (isArrayEmpty(users)) {
-      return res.status(404).send({
-        statusCode: 404,
-        message: "Username not found",
-      });
-    }
-
-    res.status(200).send({
-      statusCode: 200,
-      message: `Users found: ${users.length}`,
-      count,
-      totalPages,
-      users,
-    });
-  } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: manageErrorMessage(error),
-    });
-  }
-});
-
-users.get("/user/:userId", async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const user = await Usersmodel.findById(userId).lean().populate("books");
-
+    const user = await UserModel.findById(userId);
     if (!user) {
       return res.status(404).send({
         statusCode: 404,
         message: "User not found with given ID",
       });
     }
-
     res.status(200).send(user);
   } catch (error) {
     res.status(500).send({
@@ -102,12 +63,12 @@ users.get("/user/:userId", async (req, res) => {
   }
 });
 
-users.post("/users/create", async (req, res) => {
-  const newUser = new Usersmodel({
+users.post("/users/create", async (req, res, next) => {
+  const newUser = new UserModel({
     name: req.body.name,
     surname: req.body.surname,
+    dob: new Date(req.body.dob),
     email: req.body.email,
-    dob: req.body.dob,
     password: req.body.password,
     username: req.body.username,
     gender: req.body.gender,
@@ -115,22 +76,26 @@ users.post("/users/create", async (req, res) => {
   });
 
   try {
-    const savedUser = await newUser.save();
+    const user = await newUser.save();
     res.status(201).send({
       statusCode: 201,
       message: "User created successfully",
       savedUser,
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: manageErrorMessage(error),
-    });
+    next(error);
   }
 });
 
 users.patch("/user/update/:userId", async (req, res) => {
   const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "User Id Is required",
+    });
+  }
 
   try {
     const updatedUser = await Usersmodel.findByIdAndUpdate(userId, req.body, {
@@ -143,22 +108,25 @@ users.patch("/user/update/:userId", async (req, res) => {
         message: "User not found with given ID",
       });
     }
-
     res.status(200).send({
       statusCode: 200,
       message: "User updated successfully",
       updatedUser,
     });
   } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: manageErrorMessage(error),
-    });
+    next(error);
   }
 });
 
 users.delete("/user/:userId", async (req, res) => {
   const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "User ID is required",
+    });
+  }
 
   try {
     const deletedUser = await Usersmodel.findByIdAndDelete(userId);
@@ -170,6 +138,7 @@ users.delete("/user/:userId", async (req, res) => {
       });
     }
 
+    console.log("User deleted successfully:", user);
     res.status(200).send({
       statusCode: 200,
       message: "User deleted successfully",
@@ -189,6 +158,7 @@ users.post("/users/upload", upload.single("img"), async (req, res, next) => {
     const imgUrl = req.file.filename;
     res.status(200).json({ img: `${url}/uploads/${imgUrl}` });
   } catch (error) {
+    console.error("Error deleting user:", error);
     next(error);
   }
 });

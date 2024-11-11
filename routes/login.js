@@ -1,4 +1,4 @@
-const TOKEN = require("../tokens/token");
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const login = express.Router();
 const Usersmodel = require("../models/Usersmodel");
@@ -30,11 +30,33 @@ login.post("/login", async (request, response) => {
       });
     }
 
-    response.header("Authorized", TOKEN).status(200).send({
-      statusCode: 200,
-      message: "Correct login",
-      token: TOKEN,
-    });
+    const tokenUser = jwt.sign(
+      {
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        _id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "240m",
+      }
+    );
+
+    response
+      .header("Authorized", tokenUser)
+      .status(200)
+      .send({
+        statusCode: 200,
+        message: "Correct login",
+        token: tokenUser,
+        user: {
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          _id: user._id,
+        },
+      });
   } catch (error) {
     response.status(500).send({
       statusCode: 500,
