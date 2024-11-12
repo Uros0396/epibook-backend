@@ -4,7 +4,9 @@
   "description": "Backend for Epibooks application",
   "main": "main.js",
   "scripts": {
-    "dev": "nodemon main.js"
+    "start": "node main.js",
+  "dev": "nodemon main.js"
+    
   },
   "author": "Uros Milenkovic",
   "license": "ISC",
