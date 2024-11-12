@@ -148,23 +148,26 @@ books.post("/books/:bookId/create/comment", async (req, res) => {
   }
 });
 
-books.post("/books/create", async (req, res) => {
-  const user = await Usersmodel.findOne({ _id: req.body.author });
+{
+  /*books.post("/books/create", async (req, res) => {
+  const { asin, title, img, category, author: authorId } = req.body;
+
+  const author = await Usersmodel.findOne({ _id: authorId });
 
   const newBook = new Booksmodel({
-    asin: req.body.asin,
-    title: req.body.title,
-    img: req.body.img,
-    price: mongoose.Types.Decimal128.fromString(req.body.price),
-    category: req.body.category,
-    author: user._id,
+    asin,
+    title,
+    img,
+    price: Number(req.body.price),
+    category,
+    author,
   });
 
   try {
     const savedBook = await newBook.save();
     await Usersmodel.updateOne(
-      { _id: user._id },
-      { $push: { books: savedBook } }
+      
+     
     );
     res.status(201).send({
       statusCode: 201,
@@ -175,6 +178,38 @@ books.post("/books/create", async (req, res) => {
     res.status(500).send({
       message: error.message,
     });
+  }
+});*/
+}
+
+books.post("/books/create", async (req, res, next) => {
+  const { title, asin, category, price, img } = req.body;
+
+  if (!title || !asin || !category || !price || !img) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "Missing required fields: title, asin, price, img, asin",
+    });
+  }
+
+  try {
+    const newBook = new Booksmodel({
+      title,
+      category,
+      asin,
+      price: Number(req.body.price),
+      img,
+    });
+
+    const book = await newBook.save();
+
+    res.status(201).send({
+      statusCode: 201,
+      message: "Book created successfully",
+      book,
+    });
+  } catch (error) {
+    next(error);
   }
 });
 

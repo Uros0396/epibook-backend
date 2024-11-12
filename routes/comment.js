@@ -27,18 +27,20 @@ comments.get("/comments/:bookId", async (req, res, next) => {
 });
 
 comments.post("/comment/create", async (req, res, next) => {
-  console.log(req.body);
+  console.log("Author ID from request:", authorId);
+  console.log("Book ID from request:", bookId);
+  const { rate, author: authorId, book: bookId, comments } = req.body;
   try {
-    const author = await Usersmodel.findById(req.body.author);
-    const book = await Booksmodel.findById(req.body.book);
+    const author = await Usersmodel.findOne({ _id: authorId });
+    const book = await Booksmodel.findOne({ _id: bookId });
 
     if (!author || !book) {
       return res.status(404).send({ message: "Author or book not found" });
     }
 
     const newComment = new Commentsmodel({
-      comments: req.body.comments,
-      rate: mongoose.Types.Decimal128.fromString(req.body.rate.toString()),
+      comments,
+      rate,
       author: author._id,
       book: book._id,
     });
