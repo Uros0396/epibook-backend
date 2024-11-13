@@ -75,7 +75,7 @@ google.get(
     const userToken = jwt.sign(token, process.env.JWT_SECRET);
     const redirectUrl = `${
       process.env.FRONTEND_URL
-    }/success/${encodeURIComponent(userToken)}`;
+    }/success?token=${encodeURIComponent(userToken)}`;
     res.redirect(redirectUrl);
   }
 );
