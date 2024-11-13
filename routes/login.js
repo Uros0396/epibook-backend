@@ -13,8 +13,10 @@ const isPasswordValid = (userPassword, requestPassword) => {
 
 login.post("/login", async (request, response) => {
   try {
+    console.log("Login request received:", request.body);
     const user = await Usersmodel.findOne({ email: request.body.email });
     if (!user) {
+      console.log("User not found with given email");
       return response.status(404).send({
         statusCode: 404,
         message: "User not found with given email",
@@ -41,10 +43,19 @@ login.post("/login", async (request, response) => {
       expiresIn: "240m",
     });
 
-    response.status(200).send({
-      statusCode: 200,
-      token,
-    });
+    response
+      .header("Authorized", token)
+      .status(200)
+      .send({
+        statusCode: 200,
+        token: token,
+        user: {
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          _id: user._id,
+        },
+      });
   } catch (error) {
     response.status(500).send({
       statusCode: 500,
