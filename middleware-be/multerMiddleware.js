@@ -33,30 +33,3 @@ const upload = multer({ storage: internalStorage });
 const cloud = multer({ storage: cloudStorage });
 
 module.exports = { upload, cloud };
-
-/*const multer = require("multer");
-const path = require("path");
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-
-// Configurazione di Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Usa le variabili d'ambiente per la sicurezza
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Configurazione dello storage per multer usando Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "uploads", // Puoi cambiare il nome della cartella su Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg"], // Formati consentiti
-  },
-});
-
-// Creazione del middleware di upload
-const upload = multer({ storage });
-
-// Esportazione del middleware di upload
-module.exports = upload;*/

@@ -148,40 +148,6 @@ books.post("/books/:bookId/create/comment", async (req, res) => {
   }
 });
 
-{
-  /*books.post("/books/create", async (req, res) => {
-  const { asin, title, img, category, author: authorId } = req.body;
-
-  const author = await Usersmodel.findOne({ _id: authorId });
-
-  const newBook = new Booksmodel({
-    asin,
-    title,
-    img,
-    price: Number(req.body.price),
-    category,
-    author,
-  });
-
-  try {
-    const savedBook = await newBook.save();
-    await Usersmodel.updateOne(
-      
-     
-    );
-    res.status(201).send({
-      statusCode: 201,
-      message: "Book saved",
-      savedBook,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: error.message,
-    });
-  }
-});*/
-}
-
 books.post("/books/create", async (req, res, next) => {
   const { title, asin, category, price, img } = req.body;
 
